@@ -13,6 +13,13 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp',(err, client) => {
   console.log("Connect to mongodb server...");
 const db = client.db('TodoApp');
 
+//update data to database records
+db.collection('Todos').findOneAndUpdate({ _id: new ObjectID('5acff679bc5648b92f5d1161')},
+            { $set: {completed : true} },
+            {returnOriginal : false } ).then(( result )=>{
+                console.log(result);
+            });
+
 //Delete many data at once
 // db.collection('Todos').deleteMany({text: 'Something to do'}).then((result) => { 
 //   console.log(result);
@@ -24,10 +31,9 @@ const db = client.db('TodoApp');
 // });
 
 //finds one and deletes it
-
-db.collection('Todos').findOneAndDelete({text: 'Something to do 2'}).then((result)=>{
-console.log(result);
-});
+// db.collection('Todos').findOneAndDelete({text: 'Something to do 2'}).then((result)=>{
+// console.log(result);
+// });
 
 //   db.collection('Todos').find({
 //       _id:new ObjectID('5a1bbcacf6b5600ebc505ec4')
@@ -38,7 +44,7 @@ console.log(result);
 //       console.log("Unable to fetch todos",err);
 //   });
 
-
+//find data from database
 // db.collection('Todos').find().count().then((count)=>{
 //       console.log("Todos");
 //       console.log(`Todos : ${count}`);
