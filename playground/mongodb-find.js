@@ -22,7 +22,7 @@ db.collection('Todos').findOneAndUpdate({ _id: new ObjectID('5acff679bc5648b92f5
 
 //Delete many data at once
 // db.collection('Todos').deleteMany({text: 'Something to do'}).then((result) => { 
-//   console.log(result);
+//   onsole.log(result);
 // });
 
 //Delete only first data that is found
