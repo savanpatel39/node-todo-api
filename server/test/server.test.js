@@ -113,7 +113,7 @@ describe('DELETE /todos/:id', () =>{
         .delete(`/todos/${todos[0]._id.toHexString()}`)
         .expect(200)
         .expect((res) => {
-            expect(res.body.todo.text).toBe(todos[0].text);
+            expect(res.body.todo._id).toBe(todos[0]._id.toHexString());
         })
         .end(done);
     });
