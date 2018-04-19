@@ -110,12 +110,21 @@ describe('DELETE /todos/:id', () =>{
     
     it('should return deleted todo doc' , (done) => {
         request(app)
-        .delete(`/todos/${todos[0]._id.toHexString()}`)
+        .delete(`/todos/${todos[1]._id.toHexString()}`)
         .expect(200)
         .expect((res) => {
-            expect(res.body.todo._id).toBe(todos[0]._id.toHexString());
+            expect(res.body.todo._id).toBe(todos[1]._id.toHexString());
         })
-        .end(done);
+        .end((err,res)=>{
+            if(err){
+                return done(err);
+            }
+
+            Todo.findById(todos[1]._id.toHexString()).then((todo) => {
+                expect(todo).toNotExist;
+                done();
+            }).catch((e) => done(e));
+        });
     });
 
     it('should return 404 if todo not found', (done) => {
