@@ -238,3 +238,37 @@ describe('POST /users' , () => {
         .end(done);
     });
 })
+
+describe('POST / users/login' , () => {
+
+    it('should login user and return auth token', (done) =>{
+        request(app)
+        .post('/users/login')
+        .send({
+            email : users[0].email,
+            password : users[0].password
+        })
+        .expect(200)
+        .expect((res) => {
+            expect(res.headers['x-auth']).toBeTruthy()
+        })
+        .end((err,res) =>{
+            if(err){
+                return done(err);
+            }
+
+            User.findById(users[1]._id).then((user) => {
+                expect(user.toObject().tokens[1]).toMatchObject({
+                    access : 'auth',
+                    token : res.headers['x-auth']
+                });
+                done();
+            }).catch((e) => done(e));
+        })
+    });
+
+    it('reject', (done)=> {
+
+    });
+
+});
