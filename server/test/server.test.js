@@ -1,6 +1,7 @@
 const expect = require('expect');
 const request = require('supertest');
 const {ObjectID} = require('mongodb');
+const _ = require('lodash');
 
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
@@ -218,7 +219,7 @@ describe('POST /users' , () => {
                 expect(user).toBeTruthy();
                 expect(user.password).not.toBe(password);
                 done();
-            });
+            }).catch((e) => done(e));
         });
     });
 
@@ -245,12 +246,12 @@ describe('POST / users/login' , () => {
         request(app)
         .post('/users/login')
         .send({
-            email : users[0].email,
-            password : users[0].password
+            email : users[1].email,
+            password : users[1].password
         })
         .expect(200)
         .expect((res) => {
-            expect(res.headers['x-auth']).toBeTruthy()
+            expect(res.headers['x-auth']).toBeTruthy();
         })
         .end((err,res) =>{
             if(err){
@@ -258,17 +259,34 @@ describe('POST / users/login' , () => {
             }
 
             User.findById(users[1]._id).then((user) => {
-                expect(user.toObject().tokens[1]).toMatchObject({
+                expect(user.toObject().tokens[0]).toMatchObject({
                     access : 'auth',
                     token : res.headers['x-auth']
                 });
                 done();
             }).catch((e) => done(e));
+        });
+    });
+
+    it('should reject invalid login', (done)=> {
+        request(app)
+        .post('/users/login')
+        .send({
+            email : users[1].email,
+            password : "Fake Passwod"
         })
+        .expect(400)
+        .expect((res)=>{
+            expect(res.headers['x-auth']).toBeFalsy();
+        })
+        .end((err,res)=>{
+            if(err){
+                return done(err);
+            }
+            User.findById(users[1]._id).then((user) =>{
+                expect(user.tokens.length).toBe(0);
+                done();
+            }).catch((e)=> done(e));
+        });
     });
-
-    it('reject', (done)=> {
-
-    });
-
 });
